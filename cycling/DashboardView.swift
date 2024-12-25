@@ -1,14 +1,17 @@
 import SwiftUI
 import Charts
 
+// ViewModel to manage and provide session data
 class DashboardViewModel: ObservableObject {
-    @Published var sessions: [SessionSummary] = []
-    private let storage = SessionStorage()
+    @Published var sessions: [SessionSummary] = [] // Holds all session summaries
+    private let storage = SessionStorage() // Storage service for sessions
     
+    // Loads sessions from storage and sorts them by date
     func loadSessions() {
         sessions = storage.getAllSessions().sorted(by: { $0.date > $1.date })
     }
     
+    // Filters sessions to only include today's sessions
     var todaysSessions: [SessionSummary] {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
@@ -16,36 +19,49 @@ class DashboardViewModel: ObservableObject {
     }
 }
 
+// Main view for the dashboard
 struct DashboardView: View {
-    @StateObject private var viewModel = DashboardViewModel()
+    @StateObject private var viewModel = DashboardViewModel() // ViewModel instance
     
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 20) {
                     if !viewModel.sessions.isEmpty {
-                        // Today's Summary Section
+                        // Section for today's summary
                         VStack(alignment: .leading, spacing: 10) {
                             Text("Today's Summary")
                                 .font(.headline)
                                 .padding(.horizontal)
                             
+                            // Card displaying today's session metrics
                             TodaySummaryCard(sessions: viewModel.todaysSessions)
                                 .padding(.horizontal)
                         }
                         
-                        // Speed Chart Section
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Speed Trend")
-                                .font(.headline)
-                                .padding(.horizontal)
+                        // Section for charts
+                        HStack(spacing: 20) {
+                            // Speed chart
+                            ChartView(
+                                title: "Speed (km/h)",
+                                data: viewModel.sessions.prefix(5).reversed().enumerated().map { (index, session) in
+                                    (index + 1, session.averageSpeed)
+                                },
+                                color: .blue
+                            )
                             
-                            SpeedChartView(sessions: viewModel.sessions)
-                                .frame(height: 250)
-                                .padding(.horizontal)
+                            // Heart rate chart
+                            ChartView(
+                                title: "Heart Rate (BPM)",
+                                data: viewModel.sessions.prefix(5).reversed().enumerated().map { (index, session) in
+                                    (index + 1, Double(session.averageHeartRate))
+                                },
+                                color: .orange
+                            )
                         }
+                        .padding(.horizontal)
                         
-                        // Recent Sessions Section
+                        // Section for recent sessions
                         HStack {
                             Text("Recent Sessions")
                                 .font(.headline)
@@ -57,40 +73,117 @@ struct DashboardView: View {
                         }
                         .padding(.horizontal)
                         
+                        // List of recent session summaries
                         ForEach(viewModel.sessions.prefix(5)) { session in
-                            SessionSummaryView(session: session)
-                                .padding(.horizontal)
+                            NavigationLink(destination: SessionDetailView(session: session)) {
+                                SessionSummaryView(session: session)
+                                    .padding(.horizontal)
+                            }
+                            .buttonStyle(PlainButtonStyle()) // Ensures the link looks like a card
                         }
                     }
                 }
             }
             .navigationTitle("Dashboard")
             .onAppear {
-                viewModel.loadSessions()
+                viewModel.loadSessions() // Load sessions when view appears
             }
         }
     }
 }
 
+// Reusable chart view component
+struct ChartView: View {
+    let title: String // Title of the chart
+    let data: [(index: Int, value: Double)] // Data points for the chart
+    let color: Color // Color for the chart line and points
+    
+    var body: some View {
+        // Calculate max and min values for Y-axis scaling
+        let maxValue = (data.map { $0.value }.max() ?? 0) + 10
+        let minValue = max((data.map { $0.value }.min() ?? 0) - 5, 0)
+        
+        VStack(alignment: .leading) {
+            Text(title)
+                .font(.headline)
+                .padding(.bottom, 5)
+            
+            Chart {
+                ForEach(data, id: \.index) { item in
+                    // Line for the chart
+                    LineMark(
+                        x: .value("Session", item.index),
+                        y: .value("Value", item.value)
+                    )
+                    .interpolationMethod(.catmullRom) // Smooth curve
+                    .foregroundStyle(color)
+                    
+                    // Points on the chart
+                    PointMark(
+                        x: .value("Session", item.index),
+                        y: .value("Value", item.value)
+                    )
+                    .foregroundStyle(color)
+                    .symbolSize(50)
+                    
+                    // Annotation for the maximum value
+                    if maxValue - 5 == item.value {
+                        PointMark(
+                            x: .value("Session", item.index),
+                            y: .value("Value", item.value)
+                        )
+                        .annotation(position: .top) {
+                            Text("\(Int(item.value))")
+                                .font(.caption)
+                        }
+                    }
+                }
+            }
+            .chartXAxis(.hidden) // Hide X-axis labels
+            .chartYAxis {
+                AxisMarks(position: .leading) { value in
+                    AxisGridLine()
+                    AxisValueLabel {
+                        if let value = value.as(Double.self) {
+                            Text("\(Int(value))")
+                        }
+                    }
+                }
+            }
+            .chartYScale(domain: minValue...maxValue) // Set Y-axis scale
+            .padding() // Add padding inside the chart
+            .frame(height: 150)
+            .background(Color.gray.opacity(0.1))
+            .cornerRadius(10)
+        }
+    }
+}
+
+// Card displaying summary metrics for today's sessions
 struct TodaySummaryCard: View {
     let sessions: [SessionSummary]
     
+    // Calculate total distance
     private var totalDistance: Double {
         sessions.reduce(0) { $0 + $1.totalDistance }
     }
     
+    // Calculate total duration
     private var totalDuration: TimeInterval {
         sessions.reduce(0) { $0 + $1.totalDuration }
     }
     
+    // Calculate average speed
     private var averageSpeed: Double {
         sessions.isEmpty ? 0 : sessions.reduce(0) { $0 + $1.averageSpeed } / Double(sessions.count)
     }
     
+    // Calculate average heart rate
     private var averageHeartRate: Int {
         sessions.isEmpty ? 0 : sessions.reduce(0) { $0 + $1.averageHeartRate } / sessions.count
     }
     
+    // Calculate total calories
     private var totalCalories: Double {
         sessions.reduce(0) { $0 + $1.totalCalories }
     }
@@ -112,6 +205,7 @@ struct TodaySummaryCard: View {
         .cornerRadius(10)
     }
     
+    // Format duration into hours and minutes
     private func formatDuration(_ timeInterval: TimeInterval) -> String {
         let hours = Int(timeInterval) / 3600
         let minutes = Int(timeInterval) / 60 % 60
@@ -119,10 +213,11 @@ struct TodaySummaryCard: View {
     }
 }
 
+// Row component for displaying a metric with an icon
 struct MetricRow: View {
-    let icon: String
-    let title: String
-    let value: String
+    let icon: String // Icon name
+    let title: String // Metric title
+    let value: String // Metric value
     
     var body: some View {
         HStack {
@@ -138,70 +233,7 @@ struct MetricRow: View {
     }
 }
 
-struct SpeedChartView: View {
-    let sessions: [SessionSummary]
-    
-    private var chartData: [(index: Int, date: Date, speed: Double)] {
-        Array(sessions.prefix(7))
-            .reversed()
-            .enumerated()
-            .map { (index, session) in
-                (index, session.date, session.averageSpeed)
-            }
-    }
-    
-    var body: some View {
-        Chart {
-            ForEach(chartData, id: \.index) { item in
-                BarMark(
-                    x: .value("Session", item.index),
-                    y: .value("Speed", item.speed)
-                )
-                .foregroundStyle(.blue.opacity(0.3))
-                
-                PointMark(
-                    x: .value("Session", item.index),
-                    y: .value("Speed", item.speed)
-                )
-                .foregroundStyle(.blue)
-                .symbolSize(100)
-            }
-        }
-        .chartYAxis {
-            AxisMarks(position: .leading) { value in
-                AxisGridLine()
-                AxisValueLabel {
-                    if let speed = value.as(Double.self) {
-                        Text("\(Int(speed)) km/h")
-                    }
-                }
-            }
-        }
-        .chartXAxis {
-            AxisMarks { value in
-                AxisGridLine()
-                AxisValueLabel {
-                    if let index = value.as(Int.self),
-                       index < chartData.count {
-                        let date = chartData[index].date
-                        Text(date.formatted(.dateTime.month().day().hour().minute()))
-                    }
-                }
-            }
-        }
-        .padding()
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(10)
-    }
-}
-
-struct AllSessionsView: View {
-    var body: some View {
-        Text("All Sessions")
-            .navigationTitle("All Sessions")
-    }
-}
-
+// View for displaying a summary of a session
 struct SessionSummaryView: View {
     let session: SessionSummary
     

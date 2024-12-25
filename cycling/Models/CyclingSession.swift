@@ -8,7 +8,7 @@ struct CyclingMetrics {
     var calories: Double = 0      // in kcal
 }
 
-struct SessionSegment {
+struct SessionSegment: Codable {
     let startTime: Date
     let duration: TimeInterval
     let distance: Double
@@ -32,4 +32,23 @@ struct SessionSummary: Codable, Identifiable {
     let averageSpeed: Double
     let averageHeartRate: Int
     let totalCalories: Double
+    let segments: [SessionSegment]
+    
+    init(id: UUID = UUID(), 
+         date: Date, 
+         totalDistance: Double, 
+         totalDuration: TimeInterval, 
+         averageSpeed: Double, 
+         averageHeartRate: Int, 
+         totalCalories: Double, 
+         segments: [SessionSegment]) {
+        self.id = id
+        self.date = date
+        self.totalDistance = totalDistance
+        self.totalDuration = totalDuration
+        self.averageSpeed = averageSpeed
+        self.averageHeartRate = averageHeartRate
+        self.totalCalories = totalCalories
+        self.segments = segments
+    }
 } 

@@ -100,7 +100,8 @@ class SessionViewModel: ObservableObject {
             totalDuration: totalDuration,
             averageSpeed: averageSpeed,
             averageHeartRate: averageHeartRate,
-            totalCalories: totalCalories
+            totalCalories: totalCalories,
+            segments: sessionSegments
         )
     }
 } 
