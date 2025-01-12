@@ -30,6 +30,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		52062D5E2D30EE9B008C59F2 /* Exceptions for "cycling" folder in "cyclingTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Fonts/Jersey15-Regular.ttf",
+			);
+			target = 52D9DEEB2D198F4D005BDF3C /* cyclingTests */;
+		};
+		52062D5F2D30EE9B008C59F2 /* Exceptions for "cycling" folder in "cyclingUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Fonts/Jersey15-Regular.ttf",
+			);
+			target = 52D9DEF52D198F4D005BDF3C /* cyclingUITests */;
+		};
 		52CF38AD2D1C0A6500D5AA20 /* Exceptions for "cycling" folder in "cycling" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -58,6 +72,8 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				52CF38AD2D1C0A6500D5AA20 /* Exceptions for "cycling" folder in "cycling" target */,
+				52062D5E2D30EE9B008C59F2 /* Exceptions for "cycling" folder in "cyclingTests" target */,
+				52062D5F2D30EE9B008C59F2 /* Exceptions for "cycling" folder in "cyclingUITests" target */,
 			);
 			path = cycling;
 			sourceTree = "<group>";
@@ -432,7 +448,8 @@
 				INFOPLIST_FILE = cycling/Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to your health data to track your workouts and monitor your fitness progress.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We need permission to update your health data for better tracking and analysis.";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "App uses your precise location to track your progress.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "App uses your precise location to track your progress.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need access to track motion.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -476,7 +493,8 @@
 				INFOPLIST_FILE = cycling/Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to your health data to track your workouts and monitor your fitness progress.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We need permission to update your health data for better tracking and analysis.";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "App uses your precise location to track your progress.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "App uses your precise location to track your progress.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need access to track motion.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -515,7 +533,8 @@
 				INFOPLIST_FILE = cyclingTests/Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to your health data to track your workouts and monitor your fitness progress.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We need permission to update your health data for better tracking and analysis.";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "App uses your precise location to track your progress.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "App uses your precise location to track your progress.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need access to track motion.";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
@@ -544,7 +563,8 @@
 				INFOPLIST_FILE = cyclingTests/Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to your health data to track your workouts and monitor your fitness progress.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We need permission to update your health data for better tracking and analysis.";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "App uses your precise location to track your progress.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "App uses your precise location to track your progress.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need access to track motion.";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
@@ -572,7 +592,8 @@
 				INFOPLIST_FILE = cyclingUITests/Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to your health data to track your workouts and monitor your fitness progress.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We need permission to update your health data for better tracking and analysis.";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "App uses your precise location to track your progress.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "App uses your precise location to track your progress.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need access to track motion.";
 				IPHONEOS_DEPLOYMENT_TARGET = 16;
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
@@ -600,7 +621,8 @@
 				INFOPLIST_FILE = cyclingUITests/Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to your health data to track your workouts and monitor your fitness progress.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We need permission to update your health data for better tracking and analysis.";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "App uses your precise location to track your progress.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "App uses your precise location to track your progress.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "We need access to track motion.";
 				IPHONEOS_DEPLOYMENT_TARGET = 16;
 				MACOSX_DEPLOYMENT_TARGET = 14.5;

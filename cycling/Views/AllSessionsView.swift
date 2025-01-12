@@ -1,116 +1,120 @@
 import SwiftUI
 
-class AllSessionsViewModel: ObservableObject {
-    @Published var sessions: [SessionSummary] = []
-    private let storage = SessionStorage()
-    
-    func loadSessions() {
-        sessions = storage.getAllSessions().sorted(by: { $0.date > $1.date })
-    }
-    
-    var groupedSessions: [String: [SessionSummary]] {
-        Dictionary(grouping: sessions) { session in
-            let formatter = DateFormatter()
-            formatter.dateStyle = .medium
-            return formatter.string(from: session.date)
-        }
-    }
-}
-
 struct AllSessionsView: View {
-    @StateObject private var viewModel = AllSessionsViewModel()
-    
+    @State private var sessions: [SessionSummary] = [] // List of session summaries
+    @State private var isLoading: Bool = false         // [NEW] State for indicating loading status
+    @State private var errorMessage: String? = nil     // [NEW] State for errors
+    private let storage = SessionStorage()             // Storage for session data
+    private let formatter = DateAndDurationFormatter() // [UPDATED] Shared formatter instance
+
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 16) {
-                ForEach(viewModel.groupedSessions.keys.sorted(by: >), id: \.self) { date in
-                    Section(header: Text(date).font(.headline).padding(.horizontal).frame(maxWidth: .infinity, alignment: .leading)) {
-                        ForEach(viewModel.groupedSessions[date] ?? []) { session in
-                            NavigationLink(destination: SessionDetailView(session: session)) {
-                                SessionListCard(session: session)
+        NavigationView {
+            Group { // [UPDATED] Group for conditional UI display
+                if isLoading { 
+                    ProgressView("Loading sessions...") // [NEW] Loading indicator
+                } else if sessions.isEmpty { 
+                    Text("No sessions available.") // [NEW] Empty state message
+                        .foregroundColor(.secondary)
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 16) { // [UPDATED] Use LazyVStack for efficient rendering
+                            ForEach(sessions) { session in
+                                NavigationLink(destination: SessionDetailView(session: session)) {
+                                    SessionListCard(session: session, formatter: formatter) // [UPDATED] Pass shared formatter
+                                }
+                                .buttonStyle(PlainButtonStyle()) // [NEW] Remove default button styling
                             }
-                            .buttonStyle(PlainButtonStyle())
                         }
+                        .padding(.horizontal)
                     }
                 }
             }
-            .padding()
+            .navigationTitle("All Sessions")
+            .toolbar { // [NEW] Toolbar for manual refresh
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: refreshSessions) {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                    .disabled(isLoading) // [NEW] Disable refresh button while loading
+                }
+            }
+            .onAppear {
+                if sessions.isEmpty { // [NEW] Fetch sessions only if list is empty
+                    refreshSessions()
+                }
+            }
+
         }
-        .navigationTitle("All Sessions")
-        .navigationBarTitleDisplayMode(.large)
-        .onAppear {
-            viewModel.loadSessions()
+    }
+
+    private func refreshSessions() {
+        guard !isLoading else { return } // [NEW] Prevent duplicate refreshes
+        isLoading = true
+        errorMessage = nil
+        DispatchQueue.global(qos: .userInitiated).async { // [UPDATED] Perform data fetching in a background thread
+            storage.fetchAndStoreWorkouts { success, error in
+                DispatchQueue.main.async { // [UPDATED] Update UI on main thread
+                    isLoading = false
+                    if let error = error {
+                        errorMessage = error.localizedDescription // [NEW] Capture error
+                        return
+                    }
+                    if success {
+                        sessions = storage.getAllSessions().sorted(by: { $0.date > $1.date }) // [UPDATED] Reload sorted sessions
+                    }
+                }
+            }
         }
     }
 }
 
+// Updated SessionListCard with shared formatter
 struct SessionListCard: View {
     let session: SessionSummary
-    
+    let formatter: DateAndDurationFormatter // [UPDATED] Pass shared formatter to avoid recreating instances
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Total Distance
+            HStack {
+                Text(formatter.formattedDate(session.date))
+            }
             HStack {
                 Text("Total Distance")
-                    .font(.caption)
                     .foregroundColor(.secondary)
                 Spacer()
-                Text(String(format: "%.1f km", session.totalDistance))
-                    .font(.headline)
+                Text(String(format: "%.2f km", session.totalDistance))
             }
-            
+
             Divider()
-            
-            // Stats
+
             HStack {
-                // Duration
                 VStack(alignment: .leading) {
                     Text("Duration")
-                        .font(.caption)
+
                         .foregroundColor(.secondary)
-                    Text(formatDuration(session.totalDuration))
+                    Text(formatter.formatDuration(session.totalDuration)) // [UNCHANGED]
                 }
-                
                 Spacer()
-                
-                // Speed
                 VStack(alignment: .center) {
                     Text("Avg Speed")
-                        .font(.caption)
+
                         .foregroundColor(.secondary)
                     Text(String(format: "%.1f km/h", session.averageSpeed))
                 }
-                
                 Spacer()
-                
-                // Calories
                 VStack(alignment: .trailing) {
                     Text("Calories")
-                        .font(.caption)
+
                         .foregroundColor(.secondary)
                     Text(String(format: "%.0f kcal", session.totalCalories))
                 }
             }
-            
             Text("\(session.segments.count) segments")
-                .font(.caption)
+
                 .foregroundColor(.secondary)
         }
         .padding()
         .background(Color.gray.opacity(0.1))
         .cornerRadius(10)
     }
-    
-    private func formatDuration(_ timeInterval: TimeInterval) -> String {
-        let hours = Int(timeInterval) / 3600
-        let minutes = (Int(timeInterval) % 3600) / 60
-        let seconds = Int(timeInterval) % 60
-        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
-    }
 }
-
-#Preview {
-    NavigationView {
-        AllSessionsView()
-    }
-} 

@@ -1,4 +1,5 @@
 import Foundation
+import CoreLocation
 
 struct CyclingMetrics {
     var workoutTime: TimeInterval = 0
@@ -33,7 +34,8 @@ struct SessionSummary: Codable, Identifiable {
     let averageHeartRate: Int
     let totalCalories: Double
     let segments: [SessionSegment]
-    
+    let routeCoordinates: [CodableCoordinate]
+
     init(id: UUID = UUID(), 
          date: Date, 
          totalDistance: Double, 
@@ -41,7 +43,8 @@ struct SessionSummary: Codable, Identifiable {
          averageSpeed: Double, 
          averageHeartRate: Int, 
          totalCalories: Double, 
-         segments: [SessionSegment]) {
+         segments: [SessionSegment],
+         routeCoordinates: [CLLocationCoordinate2D]) {
         self.id = id
         self.date = date
         self.totalDistance = totalDistance
@@ -50,5 +53,20 @@ struct SessionSummary: Codable, Identifiable {
         self.averageHeartRate = averageHeartRate
         self.totalCalories = totalCalories
         self.segments = segments
+        self.routeCoordinates = routeCoordinates.map { CodableCoordinate(from: $0) }
     }
 } 
+
+struct CodableCoordinate: Codable {
+    var latitude: Double
+    var longitude: Double
+
+    init(from coordinate: CLLocationCoordinate2D) {
+        self.latitude = coordinate.latitude
+        self.longitude = coordinate.longitude
+    }
+
+    var coordinate: CLLocationCoordinate2D {
+        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+}

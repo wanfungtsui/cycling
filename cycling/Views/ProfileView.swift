@@ -1,14 +1,17 @@
-import SwiftUI
 import AuthenticationServices
+import SwiftUI
 
 struct ProfileView: View {
+    init() {
+        print("ProfileView initialized")
+    }
     var body: some View {
         NavigationView {
             VStack {
+
                 Text("Profile")
-                    .font(.largeTitle)
                     .padding()
-                
+
                 // Sign in with Apple button
                 SignInWithAppleButton { request in
                     request.requestedScopes = [.fullName, .email]
@@ -32,4 +35,4 @@ struct ProfileView: View {
 
 #Preview {
     ProfileView()
-} 
+}

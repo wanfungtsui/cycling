@@ -1,23 +1,13 @@
-//
-//  cyclingApp.swift
-//  cycling
-//
-//  Created by Wanfung Tsui on 2024/12/23.
-//
-
 import SwiftUI
 
 @main
-struct cyclingApp: App {
-    // Access the shared instance of HealthKitManager
-    private let healthKitManager = HealthKitManager.shared
-
+struct CyclingApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-               
+                .font(.custom("Jersey15-Regular", size: 20))
+                .background(Color.backgroundLight())
+                .environment(\.colorScheme, .light)
         }
     }
-    
-  
 }
