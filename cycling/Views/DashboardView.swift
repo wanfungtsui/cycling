@@ -39,24 +39,22 @@ struct DashboardView: View {
                         HStack {
                             Text("PORCU")
                                 .font(.custom("Jersey15-Regular", size: 25))
-                                .foregroundColor(Color.textDark())
+                                .foregroundColor(Color.textLight())
                                 .frame(alignment: .center)
                                 .background(Color.backgroundLight())
 
                         }
-                        if !viewModel.sessions.isEmpty {
                             // Section for today's summary
                             VStack(spacing: 20) {
                                 Text("Today's Summary")
                                     .font(.custom("Jersey15-Regular", size: 20))
                                     .frame(alignment: .center)
-                                    .foregroundColor(Color.textDark())
+                                    .foregroundColor(Color.textLight())
 
                                 // Card displaying today's session metrics
                                 TodaySummaryCard(sessions: viewModel.todaysSessions)
                                     .padding(.horizontal)
-                                    .background(Color.primaryLight())
-                                    .frame(width: 326)
+                                    .frame(width: UIScreen.main.bounds.width * 0.8)
 
                             }
 
@@ -66,11 +64,14 @@ struct DashboardView: View {
                                     VStack {
                                         Text("Start a Ride!")
                                             .bold()
+                                        
                                             .foregroundColor(Color.backgroundLight())
-                                            .frame(width: 326, height: 58)
+                                            .frame(width: UIScreen.main.bounds.width * 0.8, height: 58)
                                             .font(.custom("Jersey15-Regular", size: 20))
                                             .background(Color.primaryDark())
-                                    }
+                                        
+                                    }               .cornerRadius(10)
+
                                 }
 
                             }
@@ -78,8 +79,8 @@ struct DashboardView: View {
                             VStack(spacing: 10) {
                                 Text("Leaderboard")
                                     .font(.custom("Jersey15-Regular", size: 20))
-                                    .frame(width: 326, alignment: .leading)
-                                    .foregroundColor(Color.textDark())
+                                    .frame(width: UIScreen.main.bounds.width * 0.8, alignment: .leading)
+                                    .foregroundColor(Color.textLight())
 
                                 // Speed chart
                                 ChartView(
@@ -88,29 +89,29 @@ struct DashboardView: View {
                                         (index, session) in
                                         (index + 1, session.averageSpeed)
                                     }
-                                ).frame(width: 326)
+                                ).frame(width: UIScreen.main.bounds.width * 0.8)
                             }
-                            .padding(.horizontal)
+                            //.padding(.horizontal)
 
                             // Section for recent sessions
                             HStack(spacing: 30) {
                                 Text("Recent Sessions")
                                     .font(.custom("Jersey15-Regular", size: 20))
-                                    .foregroundColor(Color.textDark())
+                                    .foregroundColor(Color.textLight())
                                 Spacer()
                                 NavigationLink(destination: AllSessionsView()) {
 
                                     Text("More")
-                                        .foregroundColor(Color.textLight())
+                                        .foregroundColor(Color.secondaryDark())
                                         .font(.custom("Jersey15-Regular", size: 15))
 
                                 }
                             }
-                            .frame(width: 326)
+                            //.frame(width: 326)
 
                             // List of recent session summaries
                             ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 20) {
+                                HStack(alignment:.firstTextBaseline  ,   spacing: 15) {
                                     ForEach(viewModel.sessions.prefix(3)) { session in
                                         NavigationLink(
                                             destination: SessionDetailView(session: session)
@@ -120,10 +121,10 @@ struct DashboardView: View {
                                         .buttonStyle(PlainButtonStyle())  // Ensures the link looks like a card
                                     }
                                 }
-                            }       .frame(width: 326)
-                        }
+                            }
+                        
                     }
-                }
+                }.frame(width: UIScreen.main.bounds.width * 0.8)
                 .onAppear {
                     viewModel.loadSessions()  // Load sessions when view appears
                 }
@@ -165,8 +166,7 @@ struct TodaySummaryCard: View {
     private let f = DateAndDurationFormatter()  // Instance of the formatter
 
     var body: some View {
-        ZStack {
-            Color.primaryLight() // Set the background color of the ZStack
+  
             VStack(alignment: .leading, spacing: 5) {
                 MetricRow(
                     icon: "figure.run", title: "Total distance",
@@ -182,40 +182,13 @@ struct TodaySummaryCard: View {
                 MetricRow(
                     icon: "flame", title: "Calories", value: String(format: "%.0f kcal", totalCalories))
             }
-            .padding()
-            .background(Color.secondaryDark())
-        }
-        .offset(x:-16)
-        .frame(width:300)
-        .padding(.bottom,15)// Apply offset to the ZStack
+               .padding()// Apply offset to the ZStack
+
+               .background(Color.secondaryLight())
+               .cornerRadius(10)
+        .frame(width: UIScreen.main.bounds.width * 0.8)
     }
 
-}
-
-// Row component for displaying a metric with an icon
-struct MetricRow: View {
-    let icon: String  // Icon name
-    let title: String
-    let value: String
-
-    var body: some View {
-        HStack {
-            Image(systemName: icon)
-                .font(.custom("Jersey15-Regular", size: 20))
-                .foregroundColor(Color.textDark())// Set icon to medium size and heavy weight
-                .symbolRenderingMode(.palette)
-
-            Text(title)
-                .font(.custom("Jersey15-Regular", size: 20))
-                .foregroundColor(Color.textDark())
-
-            Spacer()
-            Text(value)
-                .bold()
-                .font(.custom("Jersey15-Regular", size: 25))
-                .foregroundColor(Color.backgroundLight())
-        }
-    }
 }
 
 // View for displaying a summary of a session
@@ -230,23 +203,25 @@ struct SessionSummaryView: View {
 
             Text(session.date, style: .date)
                 .font(.custom("Jersey15-Regular", size: 15))
-                .foregroundColor(Color.textDark())
+                .foregroundColor(Color.textLight())
 
             HStack {
                 Text(String(format: "%.2f km", session.totalDistance)).font(
                     .custom("Jersey15-Regular", size: 15)
                 )
-                .foregroundColor(Color.textDark())
+                .foregroundColor(Color.textLight())
                 Spacer()
                 Text(String(format: "%.2f km/h", session.averageSpeed)).font(
                     .custom("Jersey15-Regular", size: 15)
                 )
-                .foregroundColor(Color.textDark())
+                .foregroundColor(Color.textLight())
             }
             .foregroundColor(.secondary)
         }
         .padding(.bottom,5)
-        .frame(width: 174, height: 154)
+                       .cornerRadius(10)
+
+        .frame(width: UIScreen.main.bounds.width * 0.5, height: 154)
     }
 }
 

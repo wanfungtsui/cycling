@@ -2,40 +2,45 @@ import HealthKit
 
 class HealthKitManager {
     static let shared = HealthKitManager()
-    let healthStore = HKHealthStore()
-    
-    // Request authorization to read and write HealthKit data
+    private let healthStore = HKHealthStore()
+
+    private init() {}
+
     func requestAuthorization(completion: @escaping (Bool, Error?) -> Void) {
+        // Define the health data types you want to read and write
+        let readTypes: Set<HKObjectType> = [
+            HKObjectType.quantityType(forIdentifier: .heartRate)!,
+            HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
+            HKObjectType.quantityType(forIdentifier: .distanceCycling)!, // Cycling distance
+            HKObjectType.workoutType() // Workouts
+        ]
+
+        let writeTypes: Set<HKSampleType> = [
+            HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
+            HKObjectType.quantityType(forIdentifier: .distanceCycling)!, // Cycling distance
+            HKObjectType.workoutType() // Workouts
+        ]
+
+        // Request authorization
+        healthStore.requestAuthorization(toShare: writeTypes, read: readTypes) { success, error in
+            if success {
+                print("HealthKit authorization granted.")
+                self.checkHealthKitAvailability(completion: completion)
+            } else {
+                print("HealthKit authorization failed: \(error?.localizedDescription ?? "Unknown error")")
+                completion(false, error)
+            }
+        }
+    }
+
+    private func checkHealthKitAvailability(completion: @escaping (Bool, Error?) -> Void) {
         print("Checking if HealthKit data is available...")
         guard HKHealthStore.isHealthDataAvailable() else {
             print("HealthKit is not available on this device.")
             completion(false, NSError(domain: "HealthKit", code: 1, userInfo: [NSLocalizedDescriptionKey: "HealthKit is not available on this device"]))
             return
         }
-        
-        let readTypes: Set<HKObjectType> = [
-            HKObjectType.quantityType(forIdentifier: .distanceCycling)!,
-            HKObjectType.quantityType(forIdentifier: .heartRate)!,
-            HKSeriesType.workoutRoute(),
-            HKObjectType.workoutType()
-        ]
-        
-        let writeTypes: Set<HKSampleType> = [
-            HKObjectType.quantityType(forIdentifier: .distanceCycling)!,
-            HKObjectType.workoutType(),
-            HKSeriesType.workoutRoute()
-        ]
-        
-        print("Requesting HealthKit authorization...")
-        
-        healthStore.requestAuthorization(toShare: writeTypes, read: readTypes) { success, error in
-            if success {
-                print("HealthKit authorization successful.")
-            } else if let error = error {
-                print("HealthKit authorization failed: \(error.localizedDescription)")
-            }
-            completion(success, error)
-        }
+        completion(true, nil)
     }
     
     // Save cycling distance to HealthKit

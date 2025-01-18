@@ -12,10 +12,11 @@ struct ActionButton: View {
             VStack {
                 Text(title)
                     .bold()
-                    .foregroundColor(Color.backgroundLight())
+                    .foregroundColor(Color.textLight())
                     .frame(width: width, height: 58)
                 .font(.custom("Jersey15-Regular", size: 20))
-                    .background(backgroundColor)
+                .background(backgroundColor)
+                .cornerRadius(10)
             }
         }
     }

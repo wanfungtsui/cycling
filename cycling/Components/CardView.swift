@@ -12,7 +12,7 @@ struct CardView: View {
             HStack {
                 Text(cardName)
                 .font(.custom("Jersey15-Regular", size: 20))
-                    .foregroundColor(Color.textDark())
+                    .foregroundColor(Color.textLight())
                     .padding(.vertical, 10)
 
             }
@@ -21,7 +21,7 @@ struct CardView: View {
                 Text(metric)
                 .font(.custom("Jersey15-Regular", size: 40))
                     .bold()
-                    .foregroundColor(Color.textDark())
+                    .foregroundColor(Color.textLight())
                     .frame(alignment: .center)
 
                 Text(unit)
@@ -31,8 +31,8 @@ struct CardView: View {
             }.padding(.bottom, 10)
 
         }
-        .frame(width: 300)
-        .background(Color.backgroundLight())
-        .border(Color.textDark(), width: 2)
+        .frame(width: UIScreen.main.bounds.width * 0.8)
+        //.background(Color.backgroundLight())
+        .border(Color.textLight(), width: 2)
     }
 }

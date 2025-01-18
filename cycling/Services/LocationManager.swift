@@ -22,10 +22,11 @@ class LocationManager: NSObject, ObservableObject {
         locationManager.showsBackgroundLocationIndicator = true
         locationManager.activityType = .fitness
     }
-    
+    /*
     func requestPermission() {
         locationManager.requestWhenInUseAuthorization()
     }
+    */
     
     func startTracking() {
         locationManager.startUpdatingLocation()

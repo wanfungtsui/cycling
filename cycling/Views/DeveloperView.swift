@@ -52,10 +52,7 @@ struct DeveloperView: View {
 
             if success {
                 // Clear existing sessions to avoid duplicates
-
-                // Reload sessions from local storage and sort by date
-                sessions = storage.getAllSessions().sorted(by: { $0.date > $1.date })
-                logAllSessions()
+                // Removed unnecessary print statement
             }
             isLoading = false
         }

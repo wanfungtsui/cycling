@@ -1,7 +1,7 @@
 import Charts
 import SwiftUI
 
-/// A reusable bar chart view with a title and customizable data.
+/// A reusable smooth area chart view with a title and customizable data.
 struct ChartView: View {
     let title: String                 // Title of the chart
     let data: [(index: Int, value: Double)] // Data points for the chart
@@ -17,28 +17,30 @@ struct ChartView: View {
                 .font(.custom("Jersey15-Regular", size: 15))
                 .foregroundColor(Color.textLight())
                 .padding(.bottom, 2)
-                .font(.custom("Jersey15-Regular", size: 15))
-            // Bar chart
+            // Smooth area chart
             Chart {
                 ForEach(data, id: \.index) { item in
-                    BarMark(
+                    AreaMark(
                         x: .value("Index", item.index),  // X-axis value
                         y: .value("Value", item.value)   // Y-axis value
                     )
-                    //.barwidth(0.85)
-                    .foregroundStyle(Color.primaryLight()) // Alternate bar color
-                    .annotation(position: .top) {      // Value annotation above each bar
-                        Text("\(Int(item.value))")
-                            .font(.custom("Jersey15-Regular", size: 15))
-                            .foregroundColor(Color.primaryLight())
-                    }
+                    .interpolationMethod(.catmullRom) // Use Catmull-Rom for smooth curves
+                    .foregroundStyle(Color.primaryLight().opacity(0.5)) // Set area color with opacity
+                }
+                ForEach(data, id: \.index) { item in
+                    LineMark(
+                        x: .value("Index", item.index),
+                        y: .value("Value", item.value)
+                    )
+                    .interpolationMethod(.catmullRom) // Use Catmull-Rom for smooth curves
+                    .foregroundStyle(Color.primaryLight()) // Line color
                 }
             }
             // Configure Y-axis
             .chartYScale(domain: minValue...maxValue)   // Set dynamic Y-axis range
+            // Configure X-axis to start from the first data point
             .chartYAxis {
                 AxisMarks(position: .leading) { value in
-                    //AxisGridLine()                     // Add grid lines
                     AxisValueLabel {                   // Format Y-axis labels
                         if let value = value.as(Double.self) {
                             Text("\(Int(value))")
@@ -52,7 +54,6 @@ struct ChartView: View {
             .chartXAxis(.hidden)
             // Style the chart container
             .frame(height: 168)
-            .background(Color.backgroundLight())
             .padding(.horizontal)
         }
     }
@@ -67,8 +68,9 @@ struct ChartView_Previews: PreviewProvider {
                 (index: 1, value: 12.0),
                 (index: 2, value: 18.0),
                 (index: 3, value: 14.5),
-                (index: 4, value: 22.0),
-                (index: 5, value: 16.0)
+                (index: 4, value: 22.0)
+
+
             ]
         )
         .padding()

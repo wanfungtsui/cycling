@@ -20,7 +20,7 @@ struct SessionView: View {
                 HStack {
                     Text("PORCU")
                         .font(.custom("Jersey15-Regular", size: 25))
-                        .foregroundColor(Color.textDark())
+                        .foregroundColor(Color.textLight())
                         .frame(alignment: .center)
                         .background(Color.backgroundLight())
 
@@ -30,21 +30,21 @@ struct SessionView: View {
                 // Metrics
                 VStack(spacing: 20) {
                     CardView(
-                        backgroundColor: Color.backgroundLight(),
+                        backgroundColor: Color.textLight(),
                         cardName: "Duration",
                         metric: f.formatDuration(viewModel.metrics.workoutTime),
                         unit: ""
                     )
 
                     CardView(
-                        backgroundColor: Color.backgroundLight(),
+                        backgroundColor: Color.textLight(),
                         cardName: "Distance",
                         metric: String(format: "%.2f", viewModel.metrics.distance),
                         unit: "KM"
                     )
 
                     CardView(
-                        backgroundColor: Color.backgroundLight(),
+                        backgroundColor: Color.textLight(),
                         cardName: "Speed",
                         metric: String(format: "%.1f", viewModel.metrics.currentSpeed),
                         unit: "KM/H"
@@ -54,7 +54,7 @@ struct SessionView: View {
                         VStack(alignment: .center, spacing: 10) {
                             Text("Segments")
                                 .font(.custom("Jersey15-Regular", size: 20))
-                                .foregroundColor(Color.textDark())
+                                .foregroundColor(Color.textLight())
                                 .frame(alignment: .center)
 
                             ScrollView {
@@ -77,7 +77,7 @@ struct SessionView: View {
                     case .notStarted:
                         ActionButton(
                             title: "Start a ride!",
-                            backgroundColor: Color(hex: "#742230"),
+                            backgroundColor: Color(hex: "#F95A2C"),
                             width: 326
                         ) {
                             viewModel.startSession()
@@ -88,7 +88,7 @@ struct SessionView: View {
                     case .active:
                         ActionButton(
                             title: "Pause",
-                            backgroundColor: Color(hex: "#D5A553"),
+                            backgroundColor: Color(hex: "#FFBD12"),
                             width: 145
                         ) {
                             viewModel.pauseSession()
@@ -97,7 +97,7 @@ struct SessionView: View {
 
                         ActionButton(
                             title: "End",
-                            backgroundColor: Color(hex: "#786F66"),
+                            backgroundColor: Color(hex: "#9FA4B4"),
                             width: 145
                         ) {
                             viewModel.endSession()
@@ -107,7 +107,7 @@ struct SessionView: View {
                     case .paused:
                         ActionButton(
                             title: "Resume",
-                            backgroundColor: Color(hex: "#747647"),
+                            backgroundColor: Color(hex: "#00C6AE"),
                             width: 145
                         ) {
                             viewModel.resumeSession()
@@ -116,7 +116,7 @@ struct SessionView: View {
 
                         ActionButton(
                             title: "End",
-                            backgroundColor: Color(hex: "#786F66"),
+                            backgroundColor: Color(hex: "#9FA4B4"),
                             width: 145
                         ) {
                             viewModel.endSession()
@@ -126,7 +126,7 @@ struct SessionView: View {
                     case .finished:
                         ActionButton(
                             title: "Start a ride!",
-                            backgroundColor: Color(hex: "#742230"),
+                            backgroundColor: Color(hex: "#F95A2C"),
                             width: 326
                         ) {
                             viewModel.startSession()
@@ -136,7 +136,7 @@ struct SessionView: View {
                     }
                 }
                 .padding(.bottom, UIScreen.main.bounds.height * 0.05)
-                .frame(width: 326)
+                .frame(width: UIScreen.main.bounds.width * 0.8)
             }
             .onReceive(locationManager.$location) { location in
                 guard let location = location else { return }

@@ -7,104 +7,28 @@
 
 import SwiftUI
 
+// Main view of the application
 struct ContentView: View {
-    @State private var showOnboarding: Bool = !UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
-
+    // State variable to track if onboarding should be shown
+    @State private var showOnboarding: Bool = !UserDefaults.standard.bool(
+        forKey: "hasCompletedOnboarding")
+    // Initializer to customize the appearance of the navigation bar
+    init() {
+        // Call function to customize the navigation bar appearance
+        NavigationBarCustomizer.customizeNavigationBar()
+    }
     var body: some View {
+        // Conditionally show OnboardingView or DashboardView based on showOnboarding state
         if showOnboarding {
             OnboardingView(showOnboarding: $showOnboarding)
         } else {
-            mainContentView
-        }
-    }
-
-    private var mainContentView: some View {
-        TabView {
             DashboardView()
-                .tabItem {
-                    Label("Dashboard", systemImage: "house")
-                }
-
-            SessionView()
-                .tabItem {
-                    Label("Session", systemImage: "bicycle")
-                }
-
-            ProfileView()
-                .tabItem {
-                    Label("Profile", systemImage: "person.crop.circle")
-                }
-
-            DeveloperView()
-                .tabItem {
-                    Label("Developer", systemImage: "hammer")
-                }
         }
     }
+
 }
 
-struct OnboardingView: View {
-    @Binding var showOnboarding: Bool
-
-    var body: some View {
-        TabView {
-            LocationOnboardingView()
-                .tabItem {
-                    Text("Location Access")
-                }
-            
-            HealthKitOnboardingView()
-                .tabItem {
-                    Text("HealthKit Access")
-                }
-
-            PageView(title: "Get Started", description: "Set up your profile and start cycling.", showOnboarding: $showOnboarding)
-                .tabItem {
-                    Text("Get Started")
-                }
-        }
-        .tabViewStyle(PageTabViewStyle())
-        .onAppear {
-            UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
-        }
-    }
-}
-
-struct PageView: View {
-    let title: String
-    let description: String
-    @Binding var showOnboarding: Bool
-
-    var body: some View {
-        VStack {
-            Text(title)
-                .font(.largeTitle)
-                .padding()
-
-            Text(description)
-                .font(.body)
-                .padding()
-
-            Spacer()
-
-            if title == "Get Started" {
-                Button(action: {
-                    // Set onboarding as completed and transition to main content
-                    UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
-                    showOnboarding = false
-                }) {
-                    Text("Finish Onboarding")
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                .padding()
-            }
-        }
-    }
-}
-
+// Preview provider for SwiftUI previews
 #Preview {
     ContentView()
 }

@@ -36,25 +36,53 @@ extension Color {
     }
 
     static func textLight() -> Color {
-        return Color(hex: "#786F66")  // Example hex color
+        return Color(hex: "#F1FAEE")  // Example hex color
     }
 
     static func backgroundLight() -> Color {
-        return Color(hex: "#F6E6CC")  // Example hex color
+        return Color(hex: "#23232C")  // Example hex color
     }
     static func primaryDark() -> Color {
-        return Color(hex: "#742230")  // Example hex color
+        return Color(hex: "#F95A2C")  // Example hex color
     }
 
     static func primaryLight() -> Color {
-        return Color(hex: "#D5A553")  // Example hex color
+        return Color(hex: "#FFBD12")  // Example hex color
     }
 
     static func secondaryDark() -> Color {
-        return Color(hex: "#788A8E")  // Example hex color
+        return Color(hex: "#00C6AE")  // Example hex color
     }
 
     static func secondaryLight() -> Color {
-        return Color(hex: "#C4C4C4")  // Example hex color
+        return Color(hex: "#E6E6E6")  // Example hex color
     }
+
+    static func Palette1() -> Color {
+        return Color(hex: "#E9E7FC")  // Example hex color
+    }
+
+    static func Palette2() -> Color {
+        return Color(hex: "#FFF3F8")  // Example hex color
+    }
+
+    static func Palette3() -> Color {
+        return Color(hex: "#FFF4CC")  // Example hex color
+    }
+
+    static func Palette4() -> Color {
+        return Color(hex: "#D6FCF7")  // Example hex color
+    }
+
+    static func Palette5() -> Color {
+        return Color(hex: "#FFE8E8")  // Example hex color
+    }
+
+
+
+static func randomPaletteColor(for index: Int) -> Color {
+    let palettes: [Color] = [Palette1(), Palette2(), Palette3(), Palette4(), Palette5()]
+    let remainder = index % palettes.count // Get the remainder when index is divided by the number of palettes
+    return palettes[remainder]
+}
 }

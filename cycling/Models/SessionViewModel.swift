@@ -32,7 +32,8 @@ class SessionViewModel: ObservableObject {
            locationManager.requestPermission() // Request location permissions
            //requestHealthKitAuthorization()
        }
- */
+       */
+ 
  /*
     private func requestHealthKitAuthorization() {
         healthKitManager.requestAuthorization { success, error in
